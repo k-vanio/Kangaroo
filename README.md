@@ -319,11 +319,15 @@ Kangaroo need to be compiled and linked with a recent gcc (>=7). The current rel
 Go to the Kangaroo directory. ccap is the desired compute capability.
 
 ```
+docker run --gpus all -it nvidia/cuda:12.0.1-devel-ubuntu20.04 /bin/bash
+```
+
+```
 $ g++ -v
 gcc version 7.3.0 (Ubuntu 7.3.0-27ubuntu1~18.04)
 $ make all (for build without CUDA support)
 or
-$ make gpu=1 ccap=20 all
+$ make gpu=1 all
 ```
 Runnig Kangaroo (Intel(R) Xeon(R) CPU, 8 cores,  @ 2.93GHz, Quadro 600 (x2))
 
