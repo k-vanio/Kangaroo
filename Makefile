@@ -64,15 +64,35 @@ LFLAGS     = -lpthread
 
 endif
 
+# Detects the compute capability of the first GPU
+COMPUTE_CAP := $(shell ./compute_cap.sh)
+
+# Checks if the COMPUTE_CAP variable is empty, and if so, produces a fatal error
+ifeq ($(COMPUTE_CAP),)
+$(error Could not detect a GPU. Please ensure a GPU is available and that nvidia-smi is installed.)
+endif
+
+# Displays the detected compute capability
+$(info Detected Compute Capability: $(COMPUTE_CAP))
+
+# Checks if the COMPUTE_CAP variable is empty, and if so, produces a fatal error
+ifeq ($(COMPUTE_CAP),)
+$(error Could not detect a GPU. Please ensure a GPU is available and that nvidia-smi is installed.)
+endif
+
+# Displays the detected compute capability
+$(info Detected Compute Capability: $(COMPUTE_CAP))
+
+
 #--------------------------------------------------------------------
 
 ifdef gpu
 ifdef debug
 $(OBJDIR)/GPU/GPUEngine.o: GPU/GPUEngine.cu
-	$(NVCC) -G -maxrregcount=0 --ptxas-options=-v --compile --compiler-options -fPIC -ccbin $(CXXCUDA) -m64 -g -I$(CUDA)/include -gencode=arch=compute_$(ccap),code=sm_$(ccap) -o $(OBJDIR)/GPU/GPUEngine.o -c GPU/GPUEngine.cu
+	$(NVCC) -G -maxrregcount=0 --ptxas-options=-v --compile --compiler-options -fPIC -ccbin $(CXXCUDA) -m64 -g -I$(CUDA)/include -gencode=arch=compute_$(COMPUTE_CAP),code=sm_$(COMPUTE_CAP) -o $(OBJDIR)/GPU/GPUEngine.o -c GPU/GPUEngine.cu
 else
 $(OBJDIR)/GPU/GPUEngine.o: GPU/GPUEngine.cu
-	$(NVCC) -maxrregcount=0 --ptxas-options=-v --compile --compiler-options -fPIC -ccbin $(CXXCUDA) -m64 -O2 -I$(CUDA)/include -gencode=arch=compute_$(ccap),code=sm_$(ccap) -o $(OBJDIR)/GPU/GPUEngine.o -c GPU/GPUEngine.cu
+	$(NVCC) -maxrregcount=0 --ptxas-options=-v --compile --compiler-options -fPIC -ccbin $(CXXCUDA) -m64 -O2 -I$(CUDA)/include -gencode=arch=compute_$(COMPUTE_CAP),code=sm_$(COMPUTE_CAP) -o $(OBJDIR)/GPU/GPUEngine.o -c GPU/GPUEngine.cu
 endif
 endif
 
